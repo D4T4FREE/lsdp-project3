@@ -28,16 +28,14 @@ object main{
     val g=g_in
     val active:VertexRDD[(Boolean)]=g.aggregateMessages[Boolean](
       triplet => {
-        if((triplet.srcAttr==1 && triplet.dstAttr==1){
+        if(triplet.srcAttr==1 && triplet.dstAttr==1){
            triplet.sendToDst(false);
            }
          },
         (a,b)=>(a && b)
-          )
+        )
     
-    val counter=active.filter{case (id, mark)=>mark==false}.count
-    val ans=if(counter>0) false else true
-    return ans
+    if(active.filter{case (id, mark)=>mark==false}.count>0) return false else return true
   }
 
 
