@@ -17,14 +17,53 @@ object main{
   Logger.getLogger("org.spark-project").setLevel(Level.WARN)
 
   def LubyMIS(g_in: Graph[Int, Int]): Graph[Int, Int] = {
-    while (remaining_vertices >= 1) {
-        // To Implement
+   var g=g_in
+    var remaining_vertices=2
+    while (remaining_vertices >= 1) {     
+      val bv=scala.util.Random.nextFloat
+        val v1:VertexRDD[(Float,Int)]=g.aggregateMessage[(Float,Int)](
+          triplet=>{
+            triplet.sendToDst(bv,0)
+            if(triplet.srcAttr(_._1)>triplet.dstAttr(_._1)){
+              triplet.src(_._2)=1
+            } 
+          },
+          //merge msgs
+          (a,b)=>(scala.math.max(a._1,b._1),scala.math.max(a._2,b._2))
+          )
+      //join vertexRDD with g (not sure)
+      val g1=g.joinVertices(v1)
+      (
+        (id,bv,mark)=bv,mark
+      )
+          
+      val v2:VertexRDD[(Int)]=g1.aggregateMessages[(Int)](
+        triplet=>{
+          if(triplet.srcAttr==1){
+             triplet.sendToDst(-1)
+          }
+        },
+        //merge msgs
+        (a,b)=>scala.math.max(a,b)
+        )
+      
+      //not sure about joinvertices
+      val g2=g1.joinVertices(v2)(
+        (id,bv,mark)=>(bv,mark)
+        )
+      
+      g=g2
+      g.cache()
+      
+      remaining_vertices=g.vertices.filter({case(id,x)=>(x._1 ==0)}).count()
+     
     }
+    return g
+  }
   }
 
 
   def verifyMIS(g_in: Graph[Int, Int]): Boolean = {
-    // To Implement
     val g=g_in
     val active:VertexRDD[(Boolean)]=g.aggregateMessages[Boolean](
       triplet => {
