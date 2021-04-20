@@ -43,13 +43,13 @@ spark-submit --class project_3.main --master local[*] target/scala-2.12/project_
 spark-submit --class "project_3.main" --master "local[*]" target/scala-2.12/project_3_2.12-1.0.jar compute [path_to_input_graph] [path_for_output_graph]
 ```
 Apply `LubyMIS` locally on the graph files listed below and report the number of iterations and running time that the MIS algorithm consumes for **each file**. You may need to include additional print statements in `LubyMIS` in order to acquire this information. Finally, verify your outputs with `verifyMIS`.
-|        Graph file       |
-| ----------------------- |
-| small_edges.csv         |
-| line_100_edges.csv      |
-| twitter_100_edges.csv   |
-| twitter_1000_edges.csv  |
-| twitter_10000_edges.csv |
+|        Graph file       |     Iterations    | Running time |
+| ----------------------- | ----------------- | ------------ |
+| small_edges.csv         | 1                 | 0 seconds    |
+| line_100_edges.csv      | 2                 | 1 second     |
+| twitter_100_edges.csv   | 1                 | 0 seconds    |
+| twitter_1000_edges.csv  | 2                 | 1 second     |
+| twitter_10000_edges.csv | 3                 | 1 second     |
 
 3. **(3 points)**  
 a. Run `LubyMIS` on `twitter_original_edges.csv` in GCP with 3x4 cores. Report the number of iterations, running time, and remaining active vertices (i.e. vertices whose status has yet to be determined) at the end of **each iteration**. You may need to include additional print statements in `LubyMIS` in order to acquire this information. Finally, verify your outputs with `verifyMIS`.  
@@ -64,8 +64,8 @@ Delete your project's current **README.md** file (the one you're reading right n
 3. Submit a link to your repo in the Canvas assignment.
 
 ## Late submission penalties
-Beginning with the minute after the deadline, your submission will be docked a full letter grade (10%) for every 
+Beginning with the minute after the deadline, your submission will be docked a full letter grade (10%) for every
 day that it is late. For example, if the assignment is due at 11:59 PM EST on Friday and you submit at 3:00 AM EST on Sunday,
-then you will be docked 20% and the maximum grade you could receive on that assignment is an 80%. 
+then you will be docked 20% and the maximum grade you could receive on that assignment is an 80%.
 Late penalties are calculated from the last commit in the Git log.
 **If you make a commit more than 48 hours after the deadline, you will receive a 0.**
