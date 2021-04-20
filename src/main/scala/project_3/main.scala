@@ -17,49 +17,44 @@ object main{
   Logger.getLogger("org.spark-project").setLevel(Level.WARN)
 
   def LubyMIS(g_in: Graph[Int, Int]): Graph[Int, Int] = {
-   var g=g_in
+    var g=g_in
     var remaining_vertices=2
     while (remaining_vertices >= 1) {     
-      val bv=scala.util.Random.nextFloat
-        val v1:VertexRDD[(Float,Int)]=g.aggregateMessage[(Float,Int)](
+      // To Implement
+      val bv=scala.util.Random
+        val v1:VertexRDD[Float]=g.aggregateMessages[Float](
           triplet=>{
-            triplet.sendToDst(bv,0)
-            if(triplet.srcAttr(_._1)>triplet.dstAttr(_._1)){
-              triplet.src(_._2)=1
-            } 
+              triplet.sendToDst(bv.nextFloat)
+              //if(triplet.srcAttr>triplet.dstAttr){
+              //  triplet.srcAttr=1
+              //  } 
           },
           //merge msgs
-          (a,b)=>(scala.math.max(a._1,b._1),scala.math.max(a._2,b._2))
+          (a,b)=>scala.math.max(a,b)
           )
-      //join vertexRDD with g (not sure)
-      val g1=g.joinVertices(v1)
-      (
-        (id,bv,mark)=bv,mark
-      )
+     // val g1=g.joinVertices(v1)(
+       // (id:VertexId,bv:Float)=>bv)
           
-      val v2:VertexRDD[(Int)]=g1.aggregateMessages[(Int)](
+      val v2:VertexRDD[(Int)]=g.aggregateMessages[(Int)](
         triplet=>{
-          if(triplet.srcAttr==1){
+          if(triplet.srcAttr>triplet.dstAttr){
              triplet.sendToDst(-1)
+             triplet.sendToSrc(1)
           }
         },
         //merge msgs
-        (a,b)=>scala.math.max(a,b)
+        (a,b)=>(scala.math.max(a,b))
         )
       
-      //not sure about joinvertices
-      val g2=g1.joinVertices(v2)(
-        (id,bv,mark)=>(bv,mark)
-        )
-      
+      val g2=g.joinVertices(v2)(
+        (id:VertexId,bv:Int,mark:Int)=>mark)
       g=g2
       g.cache()
       
-      remaining_vertices=g.vertices.filter({case(id,x)=>(x._1 ==0)}).count()
+      remaining_vertices=g.vertices.filter({case(id,x)=>(x!=1)&&(x!=(-1))}).count().toInt
      
     }
     return g
-  }
   }
 
 
