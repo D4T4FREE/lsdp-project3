@@ -19,40 +19,60 @@ object main{
   def LubyMIS(g_in: Graph[Int, Int]): Graph[Int, Int] = {
     var g=g_in
     var remaining_vertices=2
-    while (remaining_vertices >= 1) {     
-      // To Implement
+    while (remaining_vertices >= 1) {
+      // generate bv
       val bv=scala.util.Random
-        val v1:VertexRDD[Float]=g.aggregateMessages[Float](
+        val v1:VertexRDD[Int]=g.aggregateMessages[Int](
           triplet=>{
-              triplet.sendToDst(bv.nextFloat)
+              if (triplet.dstAttr == 0) {
+                triplet.sendToDst((bv.nextFloat * 10000).toInt)
+              }
               //if(triplet.srcAttr>triplet.dstAttr){
               //  triplet.srcAttr=1
-              //  } 
+              //  }
           },
           //merge msgs
           (a,b)=>scala.math.max(a,b)
           )
      // val g1=g.joinVertices(v1)(
        // (id:VertexId,bv:Float)=>bv)
-          
-      val v2:VertexRDD[(Int)]=g.aggregateMessages[(Int)](
+       val g1 = g.joinVertices(v1)(
+         (id, old_info, bv) => if (old_info == 1 || old_info == -1) {old_info} else {bv}
+       )
+
+      val v2:VertexRDD[Int]=g.aggregateMessages[Int](
         triplet=>{
-          if(triplet.srcAttr>triplet.dstAttr){
-             triplet.sendToDst(-1)
-             triplet.sendToSrc(1)
+          if(triplet.srcAttr>triplet.dstAttr && (triplet.srcAttr != 1 || triplet.srcAttr != -1) && (triplet.dstAttr != 1 || triplet.dstAttr != -1)){
+             triplet.sendToDst(-5)
+             triplet.sendToSrc(5)
           }
         },
         //merge msgs
-        (a,b)=>(scala.math.max(a,b))
+        (a,b)=>(if (a==b) {a} else {0})
         )
-      
+
       val g2=g.joinVertices(v2)(
-        (id:VertexId,bv:Int,mark:Int)=>mark)
-      g=g2
+        (id,bv,mark) => if (bv == 1 || bv == -1) {bv} else {mark})
+
+
+        val v3:VertexRDD[Int]=g.aggregateMessages[Int](
+          triplet=>{
+            if(triplet.srcAttr == 5){
+              triplet.sendToDst(-1)
+              triplet.sendToSrc(1)
+            }
+          },
+          //merge msgs
+          (a,b)=>(if (a == -1 || b == -1) {-1} else if (a == 1 && b == 1) {1} else {0})
+          )
+      val g3=g2.joinVertices(v2)(
+        (id,old,new) => if (new == 0) {new} else {old})
+
+      g=g3
       g.cache()
-      
-      remaining_vertices=g.vertices.filter({case(id,x)=>(x!=1)&&(x!=(-1))}).count().toInt
-     
+
+      remaining_vertices=g.vertices.filter({case(id,x)=>(x == 0)}).count()
+
     }
     return g
   }
@@ -68,7 +88,7 @@ object main{
          },
         (a,b)=>(a && b)
         )
-    
+
     if(active.filter{case (id, mark)=>mark==false}.count>0) return false else return true
   }
 
