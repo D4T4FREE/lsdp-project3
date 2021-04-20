@@ -42,7 +42,7 @@ Apply `LubyMIS` locally on the graph files listed below and report the number of
 
 3. **(3 points)**  
 a. Run `LubyMIS` on `twitter_original_edges.csv` in GCP with 3x4 cores. Report the number of iterations, running time, and remaining active vertices (i.e. vertices whose status has yet to be determined) at the end of **each iteration**. You may need to include additional print statements in `LubyMIS` in order to acquire this information. Finally, verify your outputs with `verifyMIS`.  
-<br>
+
 | Configuration + Completion time | Post iter. 1 count | Post iter. 2 count | Post iter. 3 count | Post iter. 4 count | Post iter. 5 count |
 | ------------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
 | 3x4 cores (131 seconds)         | 9765135            | 3204239            | 17087              | 151                | 0                  |
