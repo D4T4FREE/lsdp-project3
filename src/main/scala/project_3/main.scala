@@ -22,7 +22,6 @@ object main{
     var remaining_vertices=2
     while (remaining_vertices >= 1) {
       // generate bv
-      println(remaining_vertices)
       val v1:VertexRDD[Int]=g.aggregateMessages[Int](
         triplet=>{
           if (triplet.dstAttr == 0) {
@@ -78,7 +77,7 @@ object main{
             }
           },
           //merge msgs
-          (a,b) => if (a == -1 || b == -1) {-1} else if (a == 1 && b == 1) 1 else 0
+          (a,b) => if (a == -1 || b == -1) {-1} else if (a == b) 1 else 0
           )
       val g3=g2.joinVertices(v3)(
         (id,old,new1) => new1)
