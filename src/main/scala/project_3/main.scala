@@ -24,10 +24,10 @@ object main{
       // generate bv
       val v1:VertexRDD[Int]=g.aggregateMessages[Int](
         triplet=>{
-          if (triplet.dstAttr == 0) {
+          if (triplet.dstAttr != 1 && triplet.dstAttr != -1) {
             triplet.sendToDst(rgen.nextInt(1000) + 5)
           }
-          if (triplet.srcAttr == 0) {
+          if (triplet.srcAttr != 1 && triplet.srcAttr != -1) {
             triplet.sendToSrc(rgen.nextInt(1000) + 5)
           }
               //if(triplet.srcAttr>triplet.dstAttr){
@@ -77,7 +77,7 @@ object main{
             }
           },
           //merge msgs
-          (a,b) => if (a == -1 || b == -1) {-1} else if (a == b) 1 else 0
+          (a,b) => if (a == -1 || b == -1) {-1} else if (a == 1 && b == 1) 1 else 0
           )
       val g3=g2.joinVertices(v3)(
         (id,old,new1) => new1)
@@ -85,7 +85,7 @@ object main{
       g=g3
       g.cache()
 
-      remaining_vertices=g.vertices.filter({case(id,x)=>(x == 0)}).count().toInt
+      remaining_vertices=g.vertices.filter({case(id,x)=>(x!=1)&&(x!=(-1))}).count().toInt
 
     }
     return g
