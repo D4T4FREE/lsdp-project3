@@ -11,6 +11,7 @@ spark-submit --class project_3.main --master local[*] target/scala-2.12/project_
 // Unix
 spark-submit --class "project_3.main" --master "local[*]" target/scala-2.12/project_3_2.12-1.0.jar verify [path_to_graph] [path_to_MIS]
 ```
+<br>
 Apply `verifyMIS` locally with the parameter combinations listed in the table below and **fill in all blanks**.
 |        Graph file       |           MIS file           | Is an MIS? |
 | ----------------------- | ---------------------------- | ---------- |
@@ -30,6 +31,7 @@ spark-submit --class project_3.main --master local[*] target/scala-2.12/project_
 spark-submit --class "project_3.main" --master "local[*]" target/scala-2.12/project_3_2.12-1.0.jar compute [path_to_input_graph] [path_for_output_graph]
 ```
 Apply `LubyMIS` locally on the graph files listed below and report the number of iterations and running time that the MIS algorithm consumes for **each file**. You may need to include additional print statements in `LubyMIS` in order to acquire this information. Finally, verify your outputs with `verifyMIS`.
+<br>
 |        Graph file       |     Iterations    | Running time |
 | ----------------------- | ----------------- | ------------ |
 | small_edges.csv         | 1                 | 0 seconds    |
@@ -40,7 +42,7 @@ Apply `LubyMIS` locally on the graph files listed below and report the number of
 
 3. **(3 points)**  
 a. Run `LubyMIS` on `twitter_original_edges.csv` in GCP with 3x4 cores. Report the number of iterations, running time, and remaining active vertices (i.e. vertices whose status has yet to be determined) at the end of **each iteration**. You may need to include additional print statements in `LubyMIS` in order to acquire this information. Finally, verify your outputs with `verifyMIS`.  
-
+<br>
 | Configuration + Completion time | Post iter. 1 count | Post iter. 2 count | Post iter. 3 count | Post iter. 4 count | Post iter. 5 count |
 | ------------------------------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
 | 3x4 cores (131 seconds)         | 9765135            | 3204239            | 17087              | 151                | 0                  |
