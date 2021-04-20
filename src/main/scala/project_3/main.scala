@@ -25,7 +25,11 @@ object main{
         val v1:VertexRDD[Int]=g.aggregateMessages[Int](
           triplet=>{
               if (triplet.dstAttr == 0) {
-                triplet.sendToDst((bv.nextFloat * 10000).toInt)
+                var x = 1
+                while (x == 1) {
+                  x = (bv.nextFloat * 10000).toInt
+                }
+                triplet.sendToDst(x)
               }
               //if(triplet.srcAttr>triplet.dstAttr){
               //  triplet.srcAttr=1
