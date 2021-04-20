@@ -18,64 +18,75 @@ object main{
 
   def LubyMIS(g_in: Graph[Int, Int]): Graph[Int, Int] = {
     var g=g_in
+    var rgen = scala.util.Random
     var remaining_vertices=2
     while (remaining_vertices >= 1) {
       // generate bv
-      val bv=scala.util.Random
-        val v1:VertexRDD[Int]=g.aggregateMessages[Int](
-          triplet=>{
-              if (triplet.dstAttr == 0) {
-                var x = 1
-                while (x == 1) {
-                  x = (bv.nextFloat * 10000).toInt
-                }
-                triplet.sendToDst(x)
-              }
+      println(remaining_vertices)
+      val v1:VertexRDD[Int]=g.aggregateMessages[Int](
+        triplet=>{
+          if (triplet.dstAttr == 0) {
+            triplet.sendToDst(rgen.nextInt(1000) + 5)
+          }
+          if (triplet.srcAttr == 0) {
+            triplet.sendToSrc(rgen.nextInt(1000) + 5)
+          }
               //if(triplet.srcAttr>triplet.dstAttr){
               //  triplet.srcAttr=1
               //  }
-          },
-          //merge msgs
-          (a,b)=>scala.math.max(a,b)
-          )
+      },
+      //merge msgs
+      (a,b) => a + b
+      )
      // val g1=g.joinVertices(v1)(
        // (id:VertexId,bv:Float)=>bv)
        val g1 = g.joinVertices(v1)(
-         (id, old_info, bv) => if (old_info == 1 || old_info == -1) {old_info} else {bv}
+         (id, old_info, bv) => old_info+bv
        )
 
-      val v2:VertexRDD[Int]=g.aggregateMessages[Int](
+      val v2:VertexRDD[Int]=g1.aggregateMessages[Int](
         triplet=>{
           if(triplet.srcAttr>triplet.dstAttr && (triplet.srcAttr != 1 || triplet.srcAttr != -1) && (triplet.dstAttr != 1 || triplet.dstAttr != -1)){
              triplet.sendToDst(-5)
              triplet.sendToSrc(5)
           }
+          //fringe case (surrounded by inactive vertices)
+          else if (triplet.srcAttr > 1 && triplet.dstAttr == -1) {
+            triplet.sendToSrc(5)
+          }
+          else if (triplet.dstAttr > 1 && triplet.srcAttr == -1) {
+            triplet.sendToDst(5)
+          }
         },
         //merge msgs
-        (a,b)=>(if (a==b) {a} else {0})
+        (a,b)=>(if (a==b) a else 0)
         )
 
       val g2=g.joinVertices(v2)(
-        (id,bv,mark) => if (bv == 1 || bv == -1) {bv} else {mark})
+        (id,bv,mark) => if (bv == 1 || bv == -1) bv else mark)
 
 
-        val v3:VertexRDD[Int]=g.aggregateMessages[Int](
+        val v3:VertexRDD[Int]=g2.aggregateMessages[Int](
           triplet=>{
             if(triplet.srcAttr == 5){
               triplet.sendToDst(-1)
               triplet.sendToSrc(1)
             }
+            if(triplet.dstAttr == 5){
+              triplet.sendToDst(1)
+              triplet.sendToSrc(-1)
+            }
           },
           //merge msgs
-          (a,b)=>(if (a == -1 || b == -1) {-1} else if (a == 1 && b == 1) {1} else {0})
+          (a,b) => if (a == -1 || b == -1) {-1} else if (a == 1 && b == 1) 1 else 0
           )
-      val g3=g2.joinVertices(v2)(
-        (id,old,new) => if (new == 0) {new} else {old})
+      val g3=g2.joinVertices(v3)(
+        (id,old,new1) => new1)
 
       g=g3
       g.cache()
 
-      remaining_vertices=g.vertices.filter({case(id,x)=>(x == 0)}).count()
+      remaining_vertices=g.vertices.filter({case(id,x)=>(x == 0)}).count().toInt
 
     }
     return g
