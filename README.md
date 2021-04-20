@@ -60,8 +60,8 @@ a. Run `LubyMIS` on `twitter_original_edges.csv` in GCP with 3x4 cores. Report t
 | 4x2 cores (239 seconds)         | 9766841            | 3217462            | 16248              | 130                | 1                  |
 | 2x2 cores (284 seconds)         | 9763065            | 3205376            | 15875              | 119                | 0                  |  
 
-b. Run `LubyMIS` on `twitter_original_edges.csv` with 4x2 cores and then 2x2 cores. Compare the running times between the 3 jobs with varying core specifications that you submitted in **3a** and **3b**.
-    - It seems that while more workers indeed helps reduce running times, the number of cores plays a much greater role in reducing running time.
+b. Run `LubyMIS` on `twitter_original_edges.csv` with 4x2 cores and then 2x2 cores. Compare the running times between the 3 jobs with varying core specifications that you submitted in **3a** and **3b**.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- It seems that while more workers indeed helps reduce running times, the number of cores plays a much greater role in reducing running time.
 
 ## Submission via GitHub
 Delete your project's current **README.md** file (the one you're reading right now) and include your report as a new **README.md** file in the project root directory. Have no fear—the README with the project description is always available for reading in the template repository you created your repository from. For more information on READMEs, feel free to visit [this page](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-readmes) in the GitHub Docs. You'll be writing in [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown). Be sure that your repository is up to date and you have pushed all changes you've made to the project's code. When you're ready to submit, simply provide the link to your repository in the Canvas assignment's submission.
