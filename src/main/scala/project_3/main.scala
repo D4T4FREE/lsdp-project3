@@ -21,6 +21,7 @@ object main{
     var rgen = scala.util.Random
     var remaining_vertices=2
     while (remaining_vertices >= 1) {
+      println("iterating")
       // generate bv
       val v1:VertexRDD[Int]=g.aggregateMessages[Int](
         triplet=>{
